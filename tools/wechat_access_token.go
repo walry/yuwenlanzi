@@ -18,7 +18,7 @@ const (
 
 type WechatAccessToken struct {
 	AccessToken 			string
-	ExpiresIn 				int64
+	ExpiresIn 				float64
 }
 //定时刷新
 func (wa *WechatAccessToken) Run(){
@@ -38,7 +38,7 @@ func (wa *WechatAccessToken) Run(){
 	}
 }
 //调用获取access_token接口
-func (wa *WechatAccessToken) requestAccessToken() int64 {
+func (wa *WechatAccessToken) requestAccessToken() float64 {
 	req := httplib.Get(requestUrl)
 	req.Param("grant_type","client_credential")
 	req.Param("appid",APPID)
@@ -52,7 +52,7 @@ func (wa *WechatAccessToken) requestAccessToken() int64 {
 
 	if result["access_token"] != nil {
 		wa.AccessToken = result["access_token"].(string)
-		wa.ExpiresIn = result["expires_in"].(int64)
+		wa.ExpiresIn = result["expires_in"].(float64)
 		return wa.ExpiresIn
 	}else {
 		fmt.Printf("response return error:%+v",result)
