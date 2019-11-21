@@ -1,10 +1,17 @@
 package test
 
 import (
+	"fmt"
 	"testing"
-	"yuwenlanzi/tools"
+	"yuwenlanzi/service/wechat"
+	"yuwenlanzi/service/wechat/menu"
 )
 
-func TestRequestAccessToken(t *testing.T){
-	tools.Start()
+func TestGetDefineMenu(t *testing.T){
+	js := menu.GetDefineMenu()
+	fmt.Print("js----",js,"\n")
+}
+
+func TestRun(t *testing.T)  {
+	wechat.Run()
 }

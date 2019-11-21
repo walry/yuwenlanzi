@@ -8,23 +8,28 @@
 package routers
 
 import (
-	"yuwenlanzi/controllers"
-
 	"github.com/astaxie/beego"
+	"yuwenlanzi/controllers"
 )
 
 func init() {
-	ns := beego.NewNamespace("/v1",
-		beego.NSNamespace("/object",
-			beego.NSInclude(
-				&controllers.ObjectController{},
-			),
-		),
-		beego.NSNamespace("/user",
-			beego.NSInclude(
-				&controllers.UserController{},
-			),
-		),
-	)
-	beego.AddNamespace(ns)
+	//ns := beego.NewNamespace("/",
+	//	//beego.NSNamespace("/v1/object",
+	//	//	beego.NSInclude(
+	//	//		&controllers.ObjectController{},
+	//	//	),
+	//	//),
+	//	//beego.NSNamespace("/v1/user",
+	//	//	beego.NSInclude(
+	//	//		&controllers.UserController{},
+	//	//	),
+	//	//),
+	//
+	//	beego.NSInclude(
+	//		&controllers.WechatController{},
+	//		),
+	//)
+	//beego.AddNamespace(ns)
+
+	beego.Router("/",&controllers.WechatController{},"*:Index")
 }

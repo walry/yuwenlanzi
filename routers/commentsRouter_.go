@@ -115,4 +115,13 @@ func init() {
             Filters: nil,
             Params: nil})
 
+    beego.GlobalControllerRouter["yuwenlanzi/controllers:WechatController"] = append(beego.GlobalControllerRouter["yuwenlanzi/controllers:WechatController"],
+        beego.ControllerComments{
+            Method: "Get",
+            Router: `/get`,
+            AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
 }

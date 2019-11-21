@@ -1,24 +1,26 @@
-package tools
+package token
 
 import (
 	"fmt"
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/httplib"
+	"sync"
 	"time"
 )
 
 var (
 	requestUrl = "https://api.weixin.qq.com/cgi-bin/token"
+	appId = beego.AppConfig.String("appid")
+	secret = beego.AppConfig.String("secret")
 )
 
 const (
-	APPID = "wx9454af5745ea0028"
-	SECRET = "51c83c6abd7c2872e3f467489d3b6a80"
-	EXPIRES = 4
+	EXPIRES = 7200
 )
 
 type WechatAccessToken struct {
 	AccessToken 			string
-	ExpiresIn 				float64
+	expiresIn 				float64
 }
 //定时刷新
 func (wa *WechatAccessToken) Run(){
@@ -27,11 +29,9 @@ func (wa *WechatAccessToken) Run(){
 		select {
 		case <-ticker.C:
 			expires := wa.requestAccessToken()
-			fmt.Print("time out\n",time.Now(),"\n")
 			if expires > 0 {
 				//重置过期时间
 				ticker = time.NewTicker(time.Duration(expires) * time.Second)
-				fmt.Print("--expires--",expires,"\n")
 			}
 			break
 		}
@@ -41,8 +41,8 @@ func (wa *WechatAccessToken) Run(){
 func (wa *WechatAccessToken) requestAccessToken() float64 {
 	req := httplib.Get(requestUrl)
 	req.Param("grant_type","client_credential")
-	req.Param("appid",APPID)
-	req.Param("secret",SECRET)
+	req.Param("appid",appId)
+	req.Param("secret",secret)
 	result := make(map[string]interface{})
 	err := req.ToJSON(&result)
 	if err != nil {
@@ -51,9 +51,12 @@ func (wa *WechatAccessToken) requestAccessToken() float64 {
 	}
 
 	if result["access_token"] != nil {
+		m := sync.Mutex{}
+		m.Lock()
 		wa.AccessToken = result["access_token"].(string)
-		wa.ExpiresIn = result["expires_in"].(float64)
-		return wa.ExpiresIn
+		wa.expiresIn = result["expires_in"].(float64)
+		m.Unlock()
+		return wa.expiresIn
 	}else {
 		fmt.Printf("response return error:%+v",result)
 		return 0
@@ -65,15 +68,15 @@ func (wa *WechatAccessToken) Refresh(){
 }
 
 //获取access_token
-func (wa *WechatAccessToken) getAccessToken() string {
+func GetAccessToken() string {
+	wa := &WechatAccessToken{}
 	if wa.AccessToken == "" {
-		wa.requestAccessToken()
+		wa.Refresh()
 	}
 	return wa.AccessToken
 }
 
 func Start(){
-	fmt.Print("wechat_access_token run")
 	wa := WechatAccessToken{}
 	go wa.Run()
 }
