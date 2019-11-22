@@ -116,7 +116,6 @@ func (jh *JvHe) CallRobot(msg string,uid string) string{
 	}
 
 	var result json.RawMessage
-
 	response := &JvHeResponse{
 		Result: &result,
 	}
@@ -166,11 +165,11 @@ func (jh *JvHe) GetLotteryInfo() string{
 
 func (jh *JvHe) HandleLotteryInfo(info map[string]interface{}) string {
 
+	m := map[string]string{"1":"福利彩票","2":"体育彩票"}
 	lottery := info["lottery"].(*LotteryInfo)
 	group := info["group"].(*LotteryList)
-	fmt.Printf("lottery------%+v\n",*lottery)
-	format := "第%s期%s%s彩票开奖结果：\n\n\t%s\n\n开奖日期：%s\n截止兑换日期：%s\n"
-	str := fmt.Sprintf(format,lottery.LotteryNo,group.LotteryName,lottery.LotteryName,lottery.LotteryRes,lottery.LotteryDate,lottery.LotteryExdate)
+	format := "第%s期【%s】【%s】彩票开奖结果：\n\n\t%s\n\n开奖日期：%s\n截止兑换日期：%s\n"
+	str := fmt.Sprintf(format,lottery.LotteryNo,m[group.LotteryTypeId],lottery.LotteryName,lottery.LotteryRes,lottery.LotteryDate,lottery.LotteryExdate)
 	if lottery.LotterySaleAmount != "" {
 		str = fmt.Sprintf("%s本期销售额：%s元\n",str,lottery.LotterySaleAmount)
 	}
@@ -180,17 +179,17 @@ func (jh *JvHe) HandleLotteryInfo(info map[string]interface{}) string {
 	if lottery.LotteryPrize != nil {
 		var prizeStr string
 		for _,prize := range lottery.LotteryPrize {
-			prizeStr += fmt.Sprintf("%s:\n中奖数量：%s\n中奖金额：%s元\n中奖条件：%s\n",prize.PrizeName,prize.PrizeNum,prize.PrizeAmount,prize.PrizeRequire)
+
+			prizeStr += fmt.Sprintf("【%s】:\n中奖数量：%s\n中奖金额：%s元\n中奖条件：%s\n",prize.PrizeName,prize.PrizeNum,prize.PrizeAmount,prize.PrizeRequire)
 		}
 		str = fmt.Sprintf("%s\n奖项：\n%s",str,prizeStr)
 	}
-	fmt.Println("-----------",str)
 	return str
 }
 
 func lotteryProducer(list []*LotteryList,ch chan<- map[string]interface{},n chan<- int) {
 	for _,item := range list{
-		go func() {
+		go func(item *LotteryList) {
 			q := httplib.Get(LOTTERY_QUERY_URL)
 			q.Param("key",common.LOTTERY_KEY)
 			q.Param("lottery_id",item.LotteryId)
@@ -215,8 +214,12 @@ func lotteryProducer(list []*LotteryList,ch chan<- map[string]interface{},n chan
 				ch<- out
 			}
 			n <- 1
-		}()
+		}(item)
 	}
+}
+
+func (jh *JvHe) Dictionary() {
+
 }
 
 

@@ -27,7 +27,6 @@ func GetDefineMenu() []*NodeMenu {
 			create("微信精选","click",common.WEXIN_SELECTION),
 			//create("成语词典","click",common.DIRECTORY),
 			//create("历史上的今天","click","live-service.history-today"),
-			//create("老黄历","click","live-service.old-calendar"),
 			//create("万年历","click","live-service.perpetual-calendar"),
 		)
 	menu2 := create("查询","click","query")

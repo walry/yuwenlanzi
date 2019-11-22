@@ -14,22 +14,15 @@ type CDATA struct {
 	Value 				string 				`xml:",cdata"`
 }
 
-type GlobalData struct {
-	BaseData
-
+type EventData struct {
 	//推送事件
 	Event 						CDATA 					`xml:"Event"`
 	EventKey 					CDATA 					`xml:"EventKey"`
-	Ticket 						CDATA 					`xml:"Ticket"`
+}
 
-	//上报地理位置事件
-	Latitude 					CDATA 					`xml:"Latitude"`
-	Longitude 					CDATA 					`xml:"Longitude"`
-	Precision 					CDATA 					`xml:"Precision"`
-
+type TextContent struct {
 	Content 					CDATA 					`xml:"Content"`
 	MsgId 						int64 					`xml:"MsgId"`
-
 }
 
 type BaseData struct {

@@ -49,7 +49,7 @@ func (m *Menu) Update() {
 
 func ConfigDIYMenu(){
 	menu := &Menu{}
-	menu.IsUpdateMenu = true
+	menu.IsUpdateMenu = false
 	menu.Update()
 }
 

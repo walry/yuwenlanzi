@@ -1,6 +1,7 @@
 package wechat
 
 import (
+	"encoding/xml"
 	"time"
 	"yuwenlanzi/common"
 	"yuwenlanzi/tools/api"
@@ -8,7 +9,8 @@ import (
 
 type ChatModal struct {
 	RequestId 						string
-	Ctx 							*GlobalData
+	RequestBody 					[]byte
+	Ctx 							*BaseData
 	ResponseXml 					map[string]interface{}
 }
 
@@ -25,8 +27,11 @@ func (wm *ChatModal) Parse(){
 }
 
 func (wm *ChatModal) ParseEvent(){
-	if wm.Ctx.Event.Value == "CLICK" {
-		switch wm.Ctx.EventKey.Value {
+	var event EventData
+	_ = xml.Unmarshal(wm.RequestBody,&event)
+
+	if event.Event.Value == "CLICK" {
+		switch event.EventKey.Value {
 
 		case common.NEWS : wm.WriteNews()
 		case common.JOKES : wm.WriteJokes()
@@ -38,7 +43,9 @@ func (wm *ChatModal) ParseEvent(){
 
 func (wm *ChatModal) HandleMessage(){
 
-	switch wm.Ctx.Content.Value {
+	var text TextContent
+	_ = xml.Unmarshal(wm.RequestBody,&text)
+	switch text.Content.Value {
 
 	case "查询彩票" : wm.ResponseLottery()
 	case "看新闻"   : wm.WriteNews()
@@ -47,7 +54,7 @@ func (wm *ChatModal) HandleMessage(){
 
 
 	default:
-		wm.ChatWithRobot()
+		wm.ChatWithRobot(text.Content.Value)
 		
 	}
 }
@@ -59,9 +66,9 @@ func (wm *ChatModal) ResponseLottery(){
 }
 
 //调用问答机器人和客户端交流
-func (wm *ChatModal) ChatWithRobot(){
+func (wm *ChatModal) ChatWithRobot(text string){
 	jh := &api.JvHe{}
-	message := jh.CallRobot(wm.Ctx.Content.Value,wm.RequestId)
+	message := jh.CallRobot(text,wm.RequestId)
 	wm.WriteText(message)
 }
 

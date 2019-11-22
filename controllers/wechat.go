@@ -22,19 +22,16 @@ func (we *WechatController) Index(){
 		we.Auth()
 		return
 	}
+
 	wm := &wechat.ChatModal{}
-	if err := xml.Unmarshal(we.Ctx.Input.RequestBody,&wm.Ctx); err !=nil {
-		fmt.Print(err)
-		logs.Info("xml.Unmarshal ----",err.Error())
-		wm.WriteText("公众号出了点问题，开发人员会第一时间处理的！")
-		return
-	}
-	logs.Info("wm.Ctx------",wm.Ctx)
-	b,_ := json.Marshal(wm.Ctx)
+	wm.RequestBody = we.Ctx.Input.RequestBody
+	var base wechat.BaseData
+	_ = xml.Unmarshal(we.Ctx.Input.RequestBody,&base)
+	wm.Ctx = &base
+	b,_ := json.Marshal(wm.RequestBody)
 	h := sha1.New()
 	h.Write(b)
 	wm.RequestId = fmt.Sprintf("%x",h.Sum(nil))
-	logs.Info("wm.RequestId------",wm.RequestId)
 	wm.Parse()
 	logs.Info("wm.ResponseXml------",wm.ResponseXml)
 	we.Data["xml"] = wm.ResponseXml[wm.RequestId]
@@ -43,7 +40,8 @@ func (we *WechatController) Index(){
 
 
 //验证服务器
-func (we *WechatController) Auth() {
+func (we *WechatController)Auth() {
+
 	signature := we.GetString("signature")
 	timestamp,_ := we.GetInt("timestamp")
 	nonce,_ := we.GetInt("nonce")
