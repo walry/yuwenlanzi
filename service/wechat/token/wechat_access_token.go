@@ -30,7 +30,7 @@ func (wa *WechatAccessToken) Run(){
 		case <-ticker.C:
 			expires := wa.requestAccessToken()
 			if expires > 0 {
-				//重置过期时间
+				//重置过期时间,开发文档说会变，那就更新一下
 				ticker = time.NewTicker(time.Duration(expires) * time.Second)
 			}
 			break
