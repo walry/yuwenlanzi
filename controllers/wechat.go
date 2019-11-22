@@ -41,11 +41,10 @@ func (we *WechatController) Index(){
 
 //验证服务器
 func (we *WechatController)Auth() {
-
+	//接收微信服务器发来的参数
 	signature := we.GetString("signature")
 	timestamp,_ := we.GetInt("timestamp")
 	nonce,_ := we.GetInt("nonce")
-	fmt.Print(signature,"\n",timestamp,"\n",nonce,"\n")
 	token := "yuwenlanzi"
 
 	arr := []string{ token, strconv.Itoa(timestamp), strconv.Itoa(nonce) }

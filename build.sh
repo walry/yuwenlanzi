@@ -1,7 +1,5 @@
 #! /bin/bash
 
-
-
 if [ $1 == "prod" ]; then
     ps -ef | grep -w yuwenlanzi | awk '{print $2}' | xargs kill -9
     git checkout master
