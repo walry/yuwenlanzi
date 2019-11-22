@@ -1,0 +1,9 @@
+.idea/
+main
+*.exe
+yuwenlanzi
+yuwenlanzi-dev
+/conf/
+/log/
+nohup.out
+lastupdate.tmp
