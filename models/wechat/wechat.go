@@ -3,7 +3,6 @@ package wechat
 import (
 	"encoding/xml"
 	"fmt"
-	"github.com/astaxie/beego/logs"
 	"time"
 	"yuwenlanzi/common"
 	"yuwenlanzi/tools/api"
@@ -48,7 +47,6 @@ func (wm *ChatModal) HandleMessage(){
 
 	var text TextContent
 	_ = xml.Unmarshal(wm.RequestBody,&text)
-	logs.Info(text.Content.Value,"--------")
 	switch text.Content.Value {
 
 	case "查询彩票" : wm.ResponseLottery()
@@ -126,8 +124,6 @@ func (wm *ChatModal)WriteText(str string){
 			Value: str,
 		},
 	}
-
-	fmt.Printf("----%+v\n",res[wm.RequestId])
 
 	wm.ResponseXml = res
 }
