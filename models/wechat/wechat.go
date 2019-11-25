@@ -2,6 +2,7 @@ package wechat
 
 import (
 	"encoding/xml"
+	"fmt"
 	"time"
 	"yuwenlanzi/common"
 	"yuwenlanzi/tools/api"
@@ -21,9 +22,10 @@ func (wm *ChatModal) Parse(){
 		case "event": wm.ParseEvent()
 		//处理文本消息
 		case "text": wm.HandleMessage()
+	default:
+		//其他情况暂时回复空消息
+		wm.WriteText("success")
 	}
-	//其他情况暂时回复空消息
-	wm.WriteText("")
 }
 
 func (wm *ChatModal) ParseEvent(){
@@ -55,7 +57,6 @@ func (wm *ChatModal) HandleMessage(){
 
 	default:
 		wm.ChatWithRobot(text.Content.Value)
-		
 	}
 }
 
@@ -69,6 +70,7 @@ func (wm *ChatModal) ResponseLottery(){
 func (wm *ChatModal) ChatWithRobot(text string){
 	jh := &api.JvHe{}
 	message := jh.CallRobot(text,wm.RequestId)
+	fmt.Println("message---",message)
 	wm.WriteText(message)
 }
 

@@ -57,5 +57,4 @@ type TextResponse struct {
 	XMLName 					xml.Name 				`xml:"xml"`
 	BaseData
 	Content 					CDATA 					`xml:"Content"`
-	MsgId 						int64 					`xml:"MsgId"`
 }

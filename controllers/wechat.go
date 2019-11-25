@@ -6,7 +6,6 @@ import (
 	"encoding/xml"
 	"fmt"
 	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/logs"
 	"sort"
 	"strconv"
 	"yuwenlanzi/models/wechat"
@@ -33,7 +32,6 @@ func (we *WechatController) Index(){
 	h.Write(b)
 	wm.RequestId = fmt.Sprintf("%x",h.Sum(nil))
 	wm.Parse()
-	logs.Info("wm.ResponseXml------",wm.ResponseXml)
 	we.Data["xml"] = wm.ResponseXml[wm.RequestId]
 	we.ServeXML()
 }
