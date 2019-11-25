@@ -33,6 +33,7 @@ func (we *WechatController) Index(){
 	h := sha1.New()
 	h.Write(b)
 	wm.RequestId = fmt.Sprintf("%x",h.Sum(nil))
+	fmt.Println("wm.RequestId------",wm.RequestId)
 	wm.Parse()
 	logs.Info("wm.ResponseXml------",wm.ResponseXml[wm.RequestId])
 	we.Data["xml"] = wm.ResponseXml[wm.RequestId]
