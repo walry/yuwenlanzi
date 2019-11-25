@@ -28,12 +28,13 @@ func (we *WechatController) Index(){
 	var base wechat.BaseData
 	_ = xml.Unmarshal(we.Ctx.Input.RequestBody,&base)
 	wm.Ctx = &base
+	logs.Info("wm.Ctx------",base)
 	b,_ := json.Marshal(wm.RequestBody)
 	h := sha1.New()
 	h.Write(b)
 	wm.RequestId = fmt.Sprintf("%x",h.Sum(nil))
 	wm.Parse()
-	logs.Info("wm.ResponseXml------",wm.ResponseXml)
+	logs.Info("wm.ResponseXml------",wm.ResponseXml[wm.RequestId])
 	we.Data["xml"] = wm.ResponseXml[wm.RequestId]
 	we.ServeXML()
 }
